@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Strain Gauge">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b1220">
+<title>Strain Gauge Calculator v1</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*:before,*:after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg1:#0b1220;--bg2:#0f1b30;--glass:rgba(255,255,255,.06);--glass2:rgba(255,255,255,.10);--gborder:rgba(255,255,255,.14);--gborder2:rgba(255,255,255,.22);--t1:#eef2fb;--t2:#aab4cc;--t3:#73809e;--blue:#4da3ff;--cyan:#39d5dd;--green:#2ee6a6;--orange:#ffb84d;--red:#ff5c7a;--purple:#b48bff;--teal:#39d5dd;--accent-grad:linear-gradient(135deg,#4da3ff 0,#39d5dd 100%);--r:16px;--safe:env(safe-area-inset-bottom,16px);--mono:SF Mono,Fira Code,Courier New,monospace}
+html,body{min-height:100vh;color:var(--t1)}
+html{background:var(--bg1)}
+body{
+  font-family:'Vazirmatn',Tahoma,'Iranian Sans',Arial,sans-serif;
+  padding-bottom:calc(var(--safe) + 48px);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(77,163,255,.20) 0%, transparent 45%),
+    radial-gradient(circle at 90% 18%, rgba(57,213,221,.16) 0%, transparent 40%),
+    radial-gradient(circle at 50% 100%, rgba(180,139,255,.10) 0%, transparent 50%),
+    linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 100%);
+  background-attachment:fixed;
+  min-height:100vh;
+}
+.hdr{background:rgba(13,20,38,.55);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);border-bottom:1px solid var(--gborder);padding:18px 20px 15px;position:sticky;top:0;z-index:30;box-shadow:0 4px 24px rgba(0,0,0,.35);display:flex;align-items:center;gap:10px;direction:ltr}
+.hdr-h1{font-size:21px;font-weight:800;color:#fff;text-align:left}
+.hdr-h1 b{background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hdr-logo{height:30px;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(77,163,255,.4))}
+.stepbar{display:flex;align-items:center;padding:16px 20px 0;gap:0}
+.sdot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;border:1.5px solid var(--gborder);color:var(--t3);background:var(--glass);backdrop-filter:blur(10px);transition:all .3s}
+.sdot.on{border-color:var(--blue);color:#fff;background:var(--accent-grad);box-shadow:0 0 0 4px rgba(77,163,255,.18),0 2px 10px rgba(77,163,255,.4)}
+.sdot.dn{border-color:var(--green);background:rgba(46,230,166,.18);color:var(--green)}
+.sline{flex:1;height:2px;background:var(--gborder);transition:background .3s}
+.sline.dn{background:var(--green)}
+.page{display:none}.page.on{display:block}
+.sec{padding:14px 16px 0}
+.sec-lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);margin-bottom:10px;font-family:'Vazirmatn',var(--mono);font-weight:700}
+.card{background:var(--glass);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--gborder);border-radius:var(--r);overflow:hidden;margin-bottom:13px;box-shadow:0 4px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.06)}
+.ir{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--gborder);cursor:pointer;transition:background .2s}
+.ir:active{background:rgba(255,255,255,.04)}
+.ir:last-child{border-bottom:none}
+.ir-left{flex:1}
+.ir-badge{display:inline-block;font-size:10px;letter-spacing:.04em;background:rgba(77,163,255,.16);color:var(--blue);padding:3px 10px;border-radius:20px;margin-bottom:4px;font-family:'Vazirmatn',var(--mono);font-weight:700;border:1px solid rgba(77,163,255,.25)}
+.ir-lbl{font-size:15px;color:var(--t1);font-weight:600}
+.ir-sub{font-size:11px;color:var(--t2);margin-top:3px;line-height:1.5}
+.ir.sel{background:rgba(77,163,255,.10)}
+.ir.sel .ir-badge{background:var(--accent-grad);color:#fff;border-color:transparent}
+.type-mark{padding:7px 12px;border-radius:999px;background:var(--glass2);border:1px solid var(--gborder2);color:var(--t2);font-size:11px;font-weight:700;white-space:nowrap;backdrop-filter:blur(8px)}
+.ir.sel .type-mark{background:var(--accent-grad);color:#fff;border-color:transparent}
+.ir-field{width:108px;flex-shrink:0}
+input[type=text],select{width:108px;background:rgba(255,255,255,.06);border:1.5px solid var(--gborder);border-radius:11px;color:var(--blue);font-size:17px;font-weight:700;padding:9px 6px;text-align:center;text-align-last:center;outline:none;font-family:var(--mono);direction:ltr;display:block;height:42px;-webkit-appearance:none;appearance:none;backdrop-filter:blur(8px);transition:border-color .2s,background .2s}
+select{font-family:'Vazirmatn',var(--mono);direction:ltr;text-align:center;text-align-last:center;text-indent:0;padding:9px 8px;background-image:none}
+.select-wrap{position:relative;width:108px;flex-shrink:0}
+.select-wrap select{width:100%}
+.select-wrap::after{content:'';position:absolute;left:12px;top:50%;width:8px;height:8px;border-right:2px solid var(--blue);border-bottom:2px solid var(--blue);transform:translateY(-65%) rotate(45deg);pointer-events:none}
+select option{text-align:center;background:#10192e;color:var(--t1)}
+input[type=text]:focus,select:focus{border-color:var(--blue);background:rgba(77,163,255,.10);box-shadow:0 0 0 3px rgba(77,163,255,.16)}
+.sign-wrap{display:flex;align-items:center;flex-shrink:0}
+.sign-toggle{display:flex;border-radius:12px;overflow:hidden;border:1.5px solid var(--gborder);background:rgba(10,18,36,.6);backdrop-filter:blur(10px)}
+.sign-btn{width:38px;height:40px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;cursor:pointer;transition:background .18s,color .18s,box-shadow .18s;border:none;background:transparent;color:var(--t3);-webkit-appearance:none;position:relative;letter-spacing:0}
+.sign-btn+.sign-btn{border-right:1px solid var(--gborder)}
+.sign-btn.active-pos{background:linear-gradient(160deg,rgba(46,230,166,.28) 0%,rgba(46,230,166,.12) 100%);color:var(--green);box-shadow:inset 0 1px 0 rgba(46,230,166,.25),0 0 8px rgba(46,230,166,.18)}
+.sign-btn.active-neg{background:linear-gradient(160deg,rgba(255,92,122,.28) 0%,rgba(255,92,122,.12) 100%);color:var(--red);box-shadow:inset 0 1px 0 rgba(255,92,122,.25),0 0 8px rgba(255,92,122,.18)}
+.btn-primary{display:block;width:calc(100% - 32px);margin:4px 16px 0;background:var(--accent-grad);color:#fff;border:none;border-radius:var(--r);font-size:16px;font-weight:700;padding:16px;cursor:pointer;box-shadow:0 6px 20px rgba(77,163,255,.32);-webkit-appearance:none;transition:opacity .2s,transform .15s;text-align:center}
+.btn-primary:active{opacity:.88;transform:scale(.99)}
+.btn-primary.action-btn{margin:10px 16px 0;font-size:15px;padding:15px}
+.btn-row{display:flex;gap:10px;margin:4px 16px 0}
+.btn-back{flex:1;background:var(--glass);backdrop-filter:blur(14px);border:1.5px solid var(--gborder);color:var(--t2);border-radius:var(--r);font-size:15px;padding:14px;cursor:pointer;font-weight:600;text-align:center}
+.btn-calc{flex:2;background:linear-gradient(135deg,#2ee6a6 0,#22c997 100%);color:#06281f;border:none;border-radius:var(--r);font-size:16px;font-weight:700;padding:14px;cursor:pointer;box-shadow:0 6px 20px rgba(46,230,166,.30);text-align:center}
+.err{display:none;margin:9px 16px 0;padding:11px 15px;background:rgba(255,92,122,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,92,122,.3);border-radius:12px;font-size:14px;color:var(--red);text-align:center}
+.vm-hero{margin:14px 16px 0;border:1px solid var(--gborder2);border-radius:var(--r);padding:24px 16px;text-align:center;background:var(--glass2);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);box-shadow:0 8px 32px rgba(77,163,255,.18), inset 0 1px 0 rgba(255,255,255,.08)}
+.vm-lbl{font-size:10px;letter-spacing:.2em;color:var(--t2);text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.vm-val{font-size:48px;font-weight:800;background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:var(--mono);line-height:1}
+.vm-unit{font-size:16px;color:var(--t2);font-weight:400;-webkit-text-fill-color:var(--t2)}
+.out-table{margin:13px 16px 0;background:var(--glass);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--gborder);border-radius:var(--r);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.ot-hdr{display:grid;grid-template-columns:1fr 1fr;background:rgba(77,163,255,.14);padding:11px 16px;border-bottom:1px solid var(--gborder)}
+.ot-hdr span{font-size:12px;font-weight:700;color:var(--t1);font-family:'Vazirmatn',var(--mono)}
+.ot-hdr span:last-child{text-align:left;direction:ltr}
+.ot-divider{padding:9px 16px;background:rgba(255,255,255,.04);font-size:11px;letter-spacing:.04em;text-transform:none;color:var(--cyan);font-family:'Vazirmatn',var(--mono);font-weight:700;border-bottom:1px solid var(--gborder);border-top:1px solid var(--gborder)}
+.ot-row{display:grid;grid-template-columns:1fr 1fr;padding:12px 16px;border-bottom:1px solid var(--gborder);align-items:center;min-height:50px}
+.ot-row:last-child{border-bottom:none}
+.ot-row.hi{background:rgba(255,255,255,.03)}
+.ot-row.vm-row{background:rgba(77,163,255,.10);border-top:2px solid var(--blue)}
+.ot-label{font-size:14px;font-weight:600;color:var(--t1);line-height:1.3}
+.ot-label .note{font-size:11px;color:var(--t2);font-weight:400;display:block;margin-top:2px}
+.ot-val{font-family:var(--mono);font-size:17px;font-weight:700;text-align:left;direction:ltr}
+.ot-val.blue{color:var(--blue)}.ot-val.green{color:var(--green)}.ot-val.orange{color:var(--orange)}.ot-val.red{color:var(--red)}.ot-val.purple{color:var(--purple)}.ot-val.teal{color:var(--teal)}
+.ot-val.big{font-size:24px;color:var(--blue)}
+.ot-unit{font-size:11px;color:var(--t3);font-weight:400;margin-right:2px}
+.sf-bar-wrap{padding:4px 16px 14px}.bar-bg{background:rgba(255,255,255,.08);border-radius:4px;height:7px;overflow:hidden}.bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.status-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:14px;font-weight:700;backdrop-filter:blur(8px)}.status-badge.ok{background:rgba(46,230,166,.15);color:var(--green);border:1px solid rgba(46,230,166,.3)}.status-badge.warn{background:rgba(255,184,77,.15);color:var(--orange);border:1px solid rgba(255,184,77,.3)}.status-badge.bad{background:rgba(255,92,122,.15);color:var(--red);border:1px solid rgba(255,92,122,.3)}
+.steps-toggle-btn{display:block;width:calc(100% - 32px);margin:10px 16px 0;background:var(--glass);backdrop-filter:blur(14px);border:1.5px solid rgba(77,163,255,.35);color:var(--blue);border-radius:var(--r);font-size:15px;font-weight:700;padding:15px;cursor:pointer;transition:background .2s;-webkit-appearance:none;text-align:center}
+.steps-panel{display:none;margin:10px 16px 0;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--gborder);border-radius:var(--r);overflow:hidden}.steps-panel.show{display:block}
+.steps-phdr{padding:13px 16px;background:rgba(77,163,255,.14);font-size:12px;letter-spacing:.04em;color:var(--t1);text-transform:none;font-family:'Vazirmatn',var(--mono);font-weight:700;border-bottom:1px solid var(--gborder)}
+.steps-body{padding:18px 16px;font-family:var(--mono);font-size:14px;color:var(--t2);line-height:2.1;direction:ltr;text-align:left;white-space:pre-wrap;background:transparent}
+.steps-body .k{color:var(--cyan);font-weight:700}.steps-body .v{color:var(--green);font-weight:800}.steps-body .h{color:var(--blue);font-weight:800;font-size:15px}
+.diag-wrap{margin:0 16px 13px;background:var(--glass);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--gborder);border-radius:var(--r);display:flex;justify-content:center;padding:16px 8px 12px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.footer-note{margin:14px 16px 0;text-align:center;color:var(--t3);font-size:13px;line-height:1.8}
+/* ── بهبودها ── */
+.warn-box{display:none;margin:9px 16px 0;padding:11px 15px;border-radius:12px;font-size:13px;text-align:right;direction:rtl;line-height:1.8;backdrop-filter:blur(10px)}
+.warn-box.mat-warn{background:rgba(255,184,77,.11);border:1px solid rgba(255,184,77,.32);color:var(--orange)}
+.warn-box.gauge-warn{background:rgba(255,184,77,.09);border:1px solid rgba(255,184,77,.28);color:var(--orange)}
+.hist-wrap{margin:13px 16px 0}
+.hist-title{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);margin-bottom:8px;font-weight:700;padding-right:2px}
+.hist-panel{margin:8px 16px 0;display:none}
+.hist-item{background:var(--glass);border:1px solid var(--gborder);border-radius:12px;padding:11px 14px 11px 34px;margin-bottom:8px;display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;direction:ltr;position:relative;transition:border-color .2s}
+.hi-vm{font-family:var(--mono);font-size:18px;font-weight:800;color:var(--blue)}
+.hi-meta{font-size:11px;color:var(--t3);text-align:right;direction:rtl;line-height:1.6;min-width:0}
+.hi-meta .hi-line1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;color:var(--t2)}
+.hist-del-btn{position:absolute;top:8px;left:8px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;background:rgba(255,92,122,.16);border:1px solid rgba(255,92,122,.35);backdrop-filter:blur(6px);border-radius:8px;color:var(--red);font-size:11px;line-height:1;cursor:pointer;transition:background .15s,border-color .15s;-webkit-appearance:none}
+.hist-del-btn:hover{background:rgba(255,92,122,.3);border-color:rgba(255,92,122,.55)}
+.hist-confirm{position:absolute;inset:0;background:rgba(11,18,32,.88);backdrop-filter:blur(12px);display:none;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px;border-radius:12px;z-index:10;padding-bottom:10px}
+.hist-confirm.show{display:flex}
+.hc-txt{font-size:13px;font-weight:700;color:var(--t1);direction:rtl;margin-top:16px}
+.hc-btns{display:flex;gap:6px}
+.hc-del{background:rgba(255,92,122,.22);border:1.5px solid rgba(255,92,122,.45);color:var(--red);border-radius:8px;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+.hc-cancel{background:var(--glass2);border:1.5px solid var(--gborder2);color:var(--t2);border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;cursor:pointer;-webkit-appearance:none}
+.hist-toggle-btn{display:block;width:calc(100% - 32px);margin:10px 16px 0;background:var(--glass);backdrop-filter:blur(14px);border:1.5px solid rgba(77,163,255,.35);color:var(--blue);border-radius:var(--r);font-size:15px;font-weight:700;padding:15px;cursor:pointer;transition:border-color .2s,color .2s;-webkit-appearance:none;text-align:center}
+.hist-toggle-btn.has-items{border-color:rgba(77,163,255,.4);color:var(--blue)}
+.hist-arrow{display:inline-block;margin-right:6px;color:currentColor;transition:transform .25s ease;font-size:3em;line-height:0;vertical-align:middle;position:relative;top:-1px}
+.hist-arrow.open{transform:rotate(180deg)}
+</style>
+</head>
+<body>
+<div class="hdr"><div class="hdr-h1"><b>Strain Gauge Calculator</b> v1</div><img class="hdr-logo" src="data:image/png;base64,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" alt="logo"></div>
+<div class="stepbar"><div class="sdot on" id="sd1">1</div><div class="sline" id="sl1"></div><div class="sdot" id="sd2">2</div><div class="sline" id="sl2"></div><div class="sdot" id="sd3">3</div><div class="sline" id="sl3"></div><div class="sdot" id="sd4">4</div></div>
+
+<div class="page on" id="p1">
+  <div class="sec">
+    <div class="sec-lbl">نوع کرنش‌سنج</div>
+    <div class="card" id="typeCard">
+      <div class="ir typeopt" data-type="uni" onclick="selType('uni',this)"><div class="ir-left"><div class="ir-badge">یک‌جهته</div><div class="ir-lbl"><span dir="ltr">0°</span></div><div class="ir-sub">یک جهته در یک راستا</div></div><div class="type-mark">انتخاب</div></div>
+      <div class="ir typeopt" data-type="bi" onclick="selType('bi',this)"><div class="ir-left"><div class="ir-badge">دوجهته</div><div class="ir-lbl"><span dir="ltr">0°</span> و <span dir="ltr">90°</span></div><div class="ir-sub">دو گیج عمود بر هم</div></div><div class="type-mark">انتخاب</div></div>
+      <div class="ir typeopt" data-type="r45" onclick="selType('r45',this)"><div class="ir-left"><div class="ir-badge">سه‌جهته</div><div class="ir-lbl"><span dir="ltr">0°</span> و <span dir="ltr">45°</span> و <span dir="ltr">90°</span></div><div class="ir-sub">سه گیج متداول</div></div><div class="type-mark">انتخاب</div></div>
+    </div>
+    <button class="btn-primary" onclick="go2()">بعدی — زوایا ←</button>
+  </div>
+</div>
+
+<div class="page" id="p2">
+  <div class="sec">
+    <div class="sec-lbl">📐 تعریف صفحه نصب و زوایا</div>
+    <div class="card">
+      <div class="ir">
+        <div class="ir-left"><div class="ir-badge">نیرو F</div><div class="ir-lbl">جهت اعمال نیروی F در راستای محور Z</div></div>
+        <div class="sign-wrap"><div class="sign-toggle"><button class="sign-btn" id="sp-F" onclick="toggleFSign()" aria-label="مثبت">+</button><button class="sign-btn" id="sn-F" onclick="toggleFSign()" aria-label="منفی">−</button></div></div>
+      </div>
+      <div class="ir">
+        <div class="ir-left"><div class="ir-badge">صفحه نصب</div><div class="ir-lbl">صفحه‌ای که کرنش سنج روی آن نصب شده است</div></div>
+        <div class="select-wrap"><select id="planeSel"><option value="xy" selected>xy</option><option value="yz">yz</option><option value="xz">xz</option></select></div>
+      </div>
+      <div class="ir">
+        <div class="ir-left"><div class="ir-badge">زاویه φ</div><div class="ir-lbl">زاویه بین بردار نرمال صفحه نصب کرنش سنج با راستای نیرو</div></div>
+        <div><input type="text" id="phi" inputmode="decimal" placeholder="0" oninput="drawDiagram()"></div>
+      </div>
+      <div class="ir">
+        <div class="ir-left"><div class="ir-badge">زاویه β</div><div class="ir-lbl">زاویه انحراف کرنش سنج در صفحه نصب</div></div>
+        <div><input type="text" id="beta" inputmode="decimal" placeholder="0" oninput="drawDiagram()"></div>
+      </div>
+    </div>
+    <div class="diag-wrap"><svg id="diagSVG" width="310" height="215" viewBox="0 0 310 215"></svg></div>
+    <div class="btn-row"><button class="btn-back" onclick="go1()">برگشت</button><button class="btn-primary" style="margin:0;flex:2" onclick="go3()">بعدی — کرنش‌ها ←</button></div>
+  </div>
+</div>
+
+<div class="page" id="p3">
+  <div class="sec">
+    <div class="sec-lbl" id="p3lbl">کرنش‌های اندازه‌گیری شده</div>
+    <div class="card" id="strainCard"></div>
+    <div class="sec-lbl" style="margin-top:4px">خواص ماده</div>
+    <div class="card">
+      <div class="ir"><div class="ir-left"><div class="ir-lbl">E — مدول الاستیسیته</div><div class="ir-sub">MPa | فولاد = 210000</div></div><div><input type="text" id="Em" value="210000" inputmode="decimal"></div></div>
+      <div class="ir"><div class="ir-left"><div class="ir-lbl">ν — ضریب پواسون</div><div class="ir-sub">فولاد = 0.3</div></div><div><input type="text" id="nu" value="0.3" inputmode="decimal"></div></div>
+      <div class="ir"><div class="ir-left"><div class="ir-lbl">Fy — تنش تسلیم</div><div class="ir-sub">MPa | اختیاری</div></div><div><input type="text" id="Fy" value="355" placeholder="235" inputmode="decimal"></div></div>
+    </div>
+    <div class="err" id="errMsg">⚠️ مقادیر کرنش را بررسی کنید.</div>
+    <div class="warn-box gauge-warn" id="strainGaugeWarn"></div>
+    <div class="warn-box mat-warn" id="matWarn"></div>
+    <div class="btn-row"><button class="btn-back" onclick="go2()">برگشت</button><button class="btn-calc" onclick="calculate()">محاسبه ←</button></div>
+  </div>
+</div>
+
+<div class="page" id="p4">
+  <div class="vm-hero"><div class="vm-lbl">Von Mises</div><div class="vm-val" id="vmOut">0<span class="vm-unit"> MPa</span></div></div>
+  <div class="out-table">
+    <div class="ot-hdr"><span>کمیت</span><span>مقدار</span></div>
+    <div class="ot-divider">کرنش خوانده شده (خام)</div>
+    <div class="ot-row hi"><div class="ot-label">ε0°</div><div class="ot-val blue" id="r-e11"></div></div>
+    <div class="ot-row hi" id="row-e22r"><div class="ot-label">ε45°</div><div class="ot-val blue" id="r-e22"></div></div>
+    <div class="ot-row hi" id="row-e33r"><div class="ot-label">ε90°</div><div class="ot-val blue" id="r-e33"></div></div>
+
+    <div class="ot-divider">کرنش تصحیح شده — سیستم F</div>
+    <div class="ot-row"><div class="ot-label">ε11<div class="note">راستای F = S11</div></div><div class="ot-val teal" id="r-e11c"></div></div>
+    <div class="ot-row"><div class="ot-label">ε22<div class="note">عمود F = S22</div></div><div class="ot-val teal" id="r-e22c"></div></div>
+    <div class="ot-row"><div class="ot-label">γ12<div class="note">برشی = S12</div></div><div class="ot-val teal" id="r-g12c"></div></div>
+
+    <div class="ot-divider">کرنش اصلی</div>
+    <div class="ot-row"><div class="ot-label">ε1<div class="note">کرنش اصلی بزرگ</div></div><div class="ot-val purple" id="r-ep1"></div></div>
+    <div class="ot-row"><div class="ot-label">ε2<div class="note">کرنش اصلی کوچک</div></div><div class="ot-val purple" id="r-ep2"></div></div>
+    <div class="ot-row"><div class="ot-label">θp<div class="note">زاویه کرنش اصلی</div></div><div class="ot-val purple" id="r-thp"></div></div>
+
+    <div class="ot-divider">تنش — آباکوس (S11/S22/S12)</div>
+    <div class="ot-row"><div class="ot-label"><b>S11</b><div class="note">در راستای F</div></div><div class="ot-val blue" id="r-s11"></div></div>
+    <div class="ot-row"><div class="ot-label"><b>S22</b><div class="note">عمود بر F</div></div><div class="ot-val blue" id="r-s22"></div></div>
+    <div class="ot-row"><div class="ot-label"><b>S12</b><div class="note">برشی</div></div><div class="ot-val blue" id="r-s12"></div></div>
+    <div class="ot-row"><div class="ot-label">σ1<div class="note">تنش اصلی بزرگ</div></div><div class="ot-val orange" id="r-sp1"></div></div>
+    <div class="ot-row"><div class="ot-label">σ2<div class="note">تنش اصلی کوچک</div></div><div class="ot-val orange" id="r-sp2"></div></div>
+
+    <div class="ot-divider">Von Mises و ضریب ایمنی</div>
+    <div class="ot-row vm-row"><div class="ot-label" style="font-size:16px"><b>Von Mises</b></div><div class="ot-val big" id="r-vm"></div></div>
+    <div class="ot-row sf-row" id="row-sf" style="display:none"><div class="ot-label">Safety Factor SF<div class="note">= Fy / vm</div></div><div class="ot-val green" id="r-sf"></div></div>
+    <div class="ot-row sf-row" id="row-pct" style="display:none"><div class="ot-label">استفاده از تسلیم</div><div class="ot-val" id="r-pct"></div></div>
+    <div class="ot-row sf-row" id="row-stat" style="display:none"><div class="ot-label">وضعیت</div><div class="ot-val" id="r-stat"></div></div>
+  </div>
+  <div class="sf-bar-wrap" id="sfBarWrap" style="display:none"><div class="bar-bg"><div class="bar-fill" id="sfBar" style="width:0;background:#2ee6a6"></div></div></div>
+  <button class="btn-primary action-btn" onclick="go1()">↺ محاسبه جدید</button>
+  <button class="steps-toggle-btn" onclick="toggleSteps()" id="stepsBtn"><span>فرمول‌ها و روش محاسبه</span><span class="hist-arrow" id="stepsArrow">▾</span></button>
+  <div class="steps-panel" id="stepsPanel"><div class="steps-phdr">مراحل محاسبه</div><div class="steps-body" id="stepsOut"></div></div>
+  <button class="hist-toggle-btn" id="histBtn" onclick="toggleHistory()"><span id="histLabel">سابقه محاسبات</span><span class="hist-arrow" id="histArrow">▾</span></button>
+  <div class="hist-panel" id="histPanel">
+    <div id="histList"></div>
+  </div>
+  <div class="footer-note">این نرم افزار توسط مهندس مهدی داودی راد تهیه و توسعه یافته است.</div>
+</div>
+
+<script>
+const id = document.getElementById.bind(document), f = (v,d=2)=> (isNaN(v)||!isFinite(v)) ? '' : Number(v).toFixed(d), $$ = s => document.querySelectorAll(s);
+let gType='uni', stepsShown=false, lastBuiltType=null, fSign='-';
+const signs = {e11:'+', e22:'+', e33:'+'};
+
+// ─── تبدیل ارقام فارسی/عربی و جداکننده‌های اعشاری/هزارگان به فرمت استاندارد انگلیسی ───
+const FA_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+const AR_DIGITS = '٠١٢٣٤٥٦٧٨٩';
+function toEnglishDigits(str){
+  if(str===null || str===undefined) return str;
+  str = str.toString();
+  let out = '';
+  for(const ch of str){
+    const fi = FA_DIGITS.indexOf(ch);
+    const ai = AR_DIGITS.indexOf(ch);
+    if(fi !== -1) out += fi;
+    else if(ai !== -1) out += ai;
+    else if(ch === '٫' || ch === '،') out += '.';      // جداکننده اعشار/هزارگان فارسی-عربی
+    else if(ch === '−' || ch === '–' || ch === '—') out += '-'; // خطوط تیره یونیکد مختلف به منفی استاندارد
+    else out += ch;
+  }
+  return out;
+}
+// نسخه عددی: رشته را تبدیل می‌کند و parseFloat امن انجام می‌دهد
+function normNum(v){
+  const s = toEnglishDigits((v||'').toString().trim()).replace(/,/g,'');
+  if(s === '' || s === '-' || s === '+') return NaN;
+  const n = parseFloat(s);
+  return n;
+}
+// بلادرنگ: هر inputی که رقم فارسی/عربی دریافت کند، فوراً به انگلیسی تبدیل می‌شود
+function liveDigitConvert(e){
+  const el = e.target;
+  if(!el || el.tagName !== 'INPUT') return;
+  const converted = toEnglishDigits(el.value);
+  if(converted !== el.value){
+    const pos = el.selectionStart;
+    const diff = converted.length - el.value.length;
+    el.value = converted;
+    try{ el.setSelectionRange(pos+diff, pos+diff); }catch(e){}
+  }
+}
+document.addEventListener('input', liveDigitConvert, true);
+
+function selType(t,el){ gType=t; $$('.typeopt').forEach(x=>x.classList.remove('sel')); if(el) el.classList.add('sel'); }
+function buildStrainUI(){
+  const cfg = gType==='uni'
+    ? [{id:'e11', lbl:'ε0°',  sub:'کرنش در راستای نیرو (εx)',        badge:'ε0°'}]
+    : gType==='bi'
+      ? [{id:'e11', lbl:'ε0°',  sub:'کرنش در راستای نیرو (εx)',  badge:'ε0°'},
+         {id:'e33', lbl:'ε90°', sub:'کرنش عمود بر نیرو (εy)',   badge:'ε90°'}]
+      : [{id:'e11', lbl:'ε0°',  sub:'کرنش در راستای نیرو (εx)',        badge:'ε0°'},
+         {id:'e22', lbl:'ε45°', sub:'کرنش در راستای ۴۵° (برای γxy)', badge:'ε45°'},
+         {id:'e33', lbl:'ε90°', sub:'کرنش عمود بر نیرو (εy)',          badge:'ε90°'}];
+  id('strainCard').innerHTML = cfg.map(fi=>`<div class="ir"><div class="ir-left"><div class="ir-badge">${fi.badge}</div><div class="ir-lbl"><b>${fi.sub}</b></div></div><div class="sign-wrap"><div class="sign-toggle"><button class="sign-btn" id="sp-${fi.id}" onclick="toggleSign('${fi.id}')" aria-label="مثبت">+</button><button class="sign-btn" id="sn-${fi.id}" onclick="toggleSign('${fi.id}')" aria-label="منفی">−</button></div></div><div><input type="text" id="${fi.id}" inputmode="decimal" placeholder="0"></div></div>`).join('');
+  Object.keys(signs).forEach(updateSignUI);
+  lastBuiltType = gType;
+}
+function updateSignUI(idn){ const p=id('sp-'+idn), n=id('sn-'+idn), inp=id(idn); if(!p||!n) return; const s=signs[idn]; p.classList.toggle('active-pos', s==='+'); n.classList.toggle('active-neg', s==='-'); if(inp && inp.value !== ''){ const raw = inp.value.toString().replace(/^[+-]/,''); inp.value = (s==='-' ? '-' : '') + raw; } }
+function toggleSign(idn){ signs[idn] = signs[idn]==='+' ? '-' : '+'; updateSignUI(idn); }
+function updateFSignUI(){ const p=id('sp-F'), n=id('sn-F'); if(!p||!n) return; p.classList.toggle('active-pos', fSign==='+'); n.classList.toggle('active-neg', fSign==='-'); }
+function toggleFSign(){ fSign = fSign==='+' ? '-' : '+'; updateFSignUI(); drawDiagram(); }
+function getVal(idn){
+  const el=id(idn);
+  if(!el) return NaN;
+  // رشته را به انگلیسی استاندارد تبدیل کن
+  const raw = toEnglishDigits((el.value||'').toString().trim()).replace(/,/g,'');
+  if(raw===''||raw==='-'||raw==='+') return NaN;
+  const v = parseFloat(raw);
+  if(isNaN(v)) return NaN;
+  // اگر کاربر مستقیماً عدد منفی تایپ کرده، همان علامت اولویت دارد
+  if(raw.startsWith('-')) return v; // v already negative
+  // در غیر اینصورت، علامت از دکمه toggle خوانده می‌شود
+  return Math.abs(v) * (signs[idn]==='-' ? -1 : 1);
+}
+
+function setStep(n){ [1,2,3,4].forEach((x,idx)=>{ const d=id('sd'+x); if(!d) return; d.classList.remove('on','dn'); if(idx+1<n){ d.classList.add('dn'); d.textContent='✓'; } else if(idx+1===n){ d.classList.add('on'); d.textContent=x; } else d.textContent=x; }); }
+function go1(){ Object.keys(signs).forEach(k=>{ signs[k]='+'; }); lastBuiltType=null; const phiEl=id('phi'), betaEl=id('beta'); if(phiEl) phiEl.value=''; if(betaEl) betaEl.value=''; fSign='-'; updateFSignUI(); drawDiagram(); [1,2,3,4].forEach(n=>id('p'+n).classList.remove('on')); id('p1').classList.add('on'); setStep(1); histOpen=false; const hp=id('histPanel'), ha=id('histArrow'); if(hp) hp.style.display='none'; if(ha) ha.classList.remove('open'); window.scrollTo({top:0,behavior:'smooth'}); }
+function clearP3Warnings(){ const e=id('errMsg'),g=id('strainGaugeWarn'),m=id('matWarn'); if(e) e.style.display='none'; if(g){g.style.display='none';g.innerHTML='';} if(m){m.style.display='none';m.innerHTML='';} }
+function go2(){ clearP3Warnings(); [1,2,3,4].forEach(n=>id('p'+n).classList.remove('on')); id('p2').classList.add('on'); setStep(2); drawDiagram(); window.scrollTo({top:0,behavior:'smooth'}); }
+function go3(){ if(gType!==lastBuiltType) buildStrainUI(); clearP3Warnings(); [1,2,3,4].forEach(n=>id('p'+n).classList.remove('on')); id('p3').classList.add('on'); setStep(3); window.scrollTo({top:0,behavior:'smooth'}); }
+function go4(){ [1,2,3,4].forEach(n=>id('p'+n).classList.remove('on')); id('p4').classList.add('on'); setStep(4); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function drawDiagram(){
+  const svg = id('diagSVG'); if(!svg) return;
+  updateFSignUI();
+  const pt  = (id('planeSel') && id('planeSel').value) || 'xy';
+  const phiDeg  = (v=>isNaN(v)?0:v)(normNum(id('phi').value));
+  const betaDeg = (v=>isNaN(v)?0:v)(normNum(id('beta').value));
+  const D = Math.PI/180;
+
+  /*
+    قرارداد مختصات (روی کاغذ):
+      +x  →  بیرون از صفحه
+      +y  →  بالا
+      +z  →  چپ
+
+    پروجکشن ایزومتریک دستی به SVG (origin = cx,cy):
+      x_svg = cx + x*(+ax) + y*(0)  + z*(-az)
+      y_svg = cy + x*(-bx) + y*(-by)+ z*(-bz)
+
+    بردارهای واحد در SVG:
+      e_x → راست‌پایین  (پرسپکتیو بیرون‌آمدن)
+      e_y → بالا
+      e_z → چپ
+  */
+  const cx=158, cy=115;
+  // ضرایب پروجکشن برای هر محور دنیا روی SVG
+  const ex_sx= 0.70, ex_sy= 0.36;   // +x  (بیرون از صفحه)
+  const ey_sx= 0.00, ey_sy=-0.90;   // +y  (بالا)
+  const ez_sx=-0.85, ez_sy= 0.28;   // +z  (چپ)
+
+  function P(wx, wy, wz){
+    return {
+      x: cx + 72*(wx*ex_sx + wy*ey_sx + wz*ez_sx),
+      y: cy + 72*(wx*ex_sy + wy*ey_sy + wz*ez_sy)
+    };
+  }
+  // محدودکردن مختصات برچسب‌ها داخل کادر SVG (310×215) تا با تغییر زاویه از کادر خارج نشوند
+  // mw/mh: حاشیه‌ی تقریبی عرض/ارتفاع متن برای جاگذاری ایمن (left-align پیش‌فرض)
+  function clampPt(x, y, mw=66, mh=12){
+    return { x: Math.max(8, Math.min(310-mw, x)), y: Math.max(mh+2, Math.min(215-6, y)) };
+  }
+  function clampMid(x, y, halfW=30, mh=12){
+    return { x: Math.max(8+halfW, Math.min(310-halfW, x)), y: Math.max(mh+2, Math.min(215-6, y)) };
+  }
+
+  // ─── صفحات در مختصات دنیا ───
+  // هر صفحه با 4 گوشه در ±1 تعریف میشه
+  const S = 1.0;
+  const planeVerts = {
+    // صفحه xy : z=0 ، x و y تغییر میکنن
+    xy: [[-S,-S,0],[ S,-S,0],[ S, S,0],[-S, S,0]],
+    // صفحه yz : x=0 ، y و z تغییر میکنن
+    yz: [[ 0,-S,-S],[ 0, S,-S],[ 0, S, S],[ 0,-S, S]],
+    // صفحه xz : y=0 ، x و z تغییر میکنن
+    xz: [[-S, 0,-S],[ S, 0,-S],[ S, 0, S],[-S, 0, S]]
+  };
+
+  // نرمال پایه هر صفحه
+  // xy → n0=(0,0,1)  چون +z چپ است، نرمال صفحه xy در راستای +z
+  // yz → n0=(1,0,0)
+  // xz → n0=(0,1,0)
+  const n0 = { xy:[0,0,1], yz:[1,0,0], xz:[0,1,0] };
+
+  // نرمال صفحه پس از دوران φ
+  // φ = زاویه بین نرمال و راستای F(=+z)
+  // دوران حول محور داخل صفحه:
+  //   xy: دوران حول +x  →  n = [sin(φ), 0, cos(φ)]
+  //   yz: دوران حول +y  →  n = [cos(φ), sin(φ), 0]  ← n0=(1,0,0) چرخیده
+  //   xz: دوران حول +z  →  n = [0, cos(φ), sin(φ)]
+  function rotN(plane, phi){
+    const c=Math.cos(phi*D), s=Math.sin(phi*D);
+    if(plane==='xy') return [s, 0, c];
+    if(plane==='yz') return [c, s, 0];
+    return [0, c, s];
+  }
+  // محور تکیه (hinge) که صفحه حول آن با φ کج می‌شود — همان محوری که rotN برای نرمال استفاده می‌کند
+  const phiAxis = { xy:'y', yz:'z', xz:'x' };
+  // چرخش ساعت‌گرد حول یک محور مشخص (دیده‌شده از سمت مثبت آن محور به‌سمت مبدا)
+  // محور چرخش β برای هر صفحه: xy حول z ، xz حول y ، yz حول y
+  const gAxis = { xy:'z', xz:'y', yz:'x' };
+  function rotAxis([x,y,z], axis, angDeg){
+    const a=angDeg*D, c=Math.cos(a), s=Math.sin(a);
+    if(axis==='z') return [x*c+y*s, -x*s+y*c, z];
+    if(axis==='y') return [x*c-z*s, y, x*s+z*c];
+    if(axis==='x') return [x, y*c+z*s, -y*s+z*c];
+    return [x,y,z];
+  }
+
+  const nv = rotN(pt, phiDeg);
+  const NL = 1.18; // طول بردار نرمال
+
+  // بردار F: همیشه در راستای محور Z جهانی است (مستقل از صفحه انتخابی)، با علامت قابل‌انتخاب کاربر (پیش‌فرض منفی)
+  const Fv = [0, 0, fSign==='-'?-1:1];
+  const FL = 1.12;
+
+  // ─── رسم ───
+  const O = P(0,0,0);
+
+  // ترتیب رسم صفحات: صفحه انتخابی آخر رسم بشه (روی بقیه)
+  const allPlanes = ['yz','xz','xy'];
+  const order = [...allPlanes.filter(p=>p!==pt), pt];
+
+  let out = `<defs>
+    <marker id="dAx" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,1 L7,4 L0,7 Z" fill="#aab4cc"/></marker>
+    <marker id="dF"  viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,1 L7,4 L0,7 Z" fill="#4da3ff"/></marker>
+    <marker id="dN"  viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,1 L7,4 L0,7 Z" fill="#ffd23f"/></marker>
+    <marker id="dPhi" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,1 L7,4 L0,7 Z" fill="#b48bff"/></marker>
+  </defs>`;
+
+  // صفحات
+  for(const pl of order){
+    const sel = pl===pt;
+    const verts = sel ? planeVerts[pl].map(v=>rotAxis(rotAxis(v, gAxis[pl], betaDeg), phiAxis[pl], -phiDeg)) : planeVerts[pl];
+    const vs = verts.map(([wx,wy,wz])=>{ const p=P(wx,wy,wz); return `${p.x.toFixed(1)},${p.y.toFixed(1)}`; }).join(' ');
+    out += `<polygon points="${vs}" fill="${sel?'rgba(46,230,166,.20)':'rgba(255,255,255,.05)'}" stroke="${sel?'#2ee6a6':'rgba(255,255,255,.22)'}" stroke-width="${sel?2.2:1.2}" opacity="${sel?0.95:0.7}"/>`;
+    // label وسط صفحه
+    const midRaw = verts.reduce((a,[wx,wy,wz])=>{const p=P(wx,wy,wz);return{x:a.x+p.x/4,y:a.y+p.y/4};},{x:0,y:0});
+    const mid = clampMid(midRaw.x, midRaw.y+4, 28);
+    out += `<text x="${mid.x.toFixed(1)}" y="${mid.y.toFixed(1)}" text-anchor="middle" fill="${sel?'#2ee6a6':'#73809e'}" font-size="${sel?12:10}" font-weight="${sel?700:400}" font-family="monospace">${pl.toUpperCase()}</text>`;
+  }
+
+  // محورها
+  const axes=[
+    {v:[ 1.35, 0,    0   ], lbl:'+x', ox: 6, oy: 4},
+    {v:[ 0,    1.35, 0   ], lbl:'+y', ox: 4, oy:-4},
+    {v:[ 0,    0,    1.35], lbl:'+z', ox:-22,oy: 4},
+  ];
+  for(const ax of axes){
+    const T=P(...ax.v);
+    out += `<line x1="${O.x.toFixed(1)}" y1="${O.y.toFixed(1)}" x2="${T.x.toFixed(1)}" y2="${T.y.toFixed(1)}" stroke="#aab4cc" stroke-width="2" marker-end="url(#dAx)"/>`;
+    const al = clampPt(T.x+ax.ox, T.y+ax.oy, 26, 11);
+    out += `<text x="${al.x.toFixed(1)}" y="${al.y.toFixed(1)}" fill="#aab4cc" font-size="11" font-family="monospace" font-weight="700">${ax.lbl}</text>`;
+  }
+
+  // بردار F
+  const FP=P(Fv[0]*FL, Fv[1]*FL, Fv[2]*FL);
+  out += `<line x1="${O.x.toFixed(1)}" y1="${O.y.toFixed(1)}" x2="${FP.x.toFixed(1)}" y2="${FP.y.toFixed(1)}" stroke="#4da3ff" stroke-width="3.2" marker-end="url(#dF)"/>`;
+  // برچسب F با فاصله کافی از نوک بردار (با استفاده از بردار ادامه در فضای ۳D)
+  const FLlbl = FL + 0.28;
+  const FPlbl = P(Fv[0]*FLlbl, Fv[1]*FLlbl, Fv[2]*FLlbl);
+  const Flb=clampPt(FPlbl.x-7, FPlbl.y+5, 16, 14);
+  out += `<text x="${Flb.x.toFixed(1)}" y="${Flb.y.toFixed(1)}" fill="#4da3ff" font-size="14" font-weight="800" font-family="monospace">F</text>`;
+
+  // بردار نرمال n (زرد نئونی)
+  const NP=P(nv[0]*NL, nv[1]*NL, nv[2]*NL);
+  out += `<line x1="${O.x.toFixed(1)}" y1="${O.y.toFixed(1)}" x2="${NP.x.toFixed(1)}" y2="${NP.y.toFixed(1)}" stroke="#ffd23f" stroke-width="2.8" stroke-dasharray="6 3" marker-end="url(#dN)"/>`;
+  // فاصله برچسب n از نوک بردار — مثل F با 0.28 واحد فضای ۳D
+  const NLlbl = NL + 0.28;
+  const NPlbl = P(nv[0]*NLlbl, nv[1]*NLlbl, nv[2]*NLlbl);
+  const Nlb=clampPt(NPlbl.x-7, NPlbl.y+5, 14, 14);
+  out += `<text x="${Nlb.x.toFixed(1)}" y="${Nlb.y.toFixed(1)}" fill="#ffd23f" font-size="14" font-weight="800" font-family="monospace">n</text>`;
+
+  // بردار راستای گیج پس از انحراف β (بنفش)
+  const gRefMap = { xy:[1,0,0], yz:[0,1,0], xz:[1,0,0] };
+  const gRefV = rotAxis(rotAxis(gRefMap[pt], gAxis[pt], betaDeg), phiAxis[pt], -phiDeg);
+  const GRL = 1.0;
+  const GRP=P(gRefV[0]*GRL, gRefV[1]*GRL, gRefV[2]*GRL);
+  out += `<line x1="${O.x.toFixed(1)}" y1="${O.y.toFixed(1)}" x2="${GRP.x.toFixed(1)}" y2="${GRP.y.toFixed(1)}" stroke="#b48bff" stroke-width="2.4" stroke-dasharray="6 3" marker-end="url(#dPhi)"/>`;
+
+  // ─── قوس زاویه φ (زرد) بین نرمال پایه صفحه (n0) و نرمال کج‌شده (nv) — polyline 3D ───
+  {
+    const arcScale_phi = 0.50;
+    const steps = 32;
+    if(Math.abs(phiDeg) > 1){
+      const arcPts_phi = [];
+      for(let i = 0; i <= steps; i++){
+        const v = rotN(pt, (i/steps)*phiDeg);
+        const p = P(v[0]*arcScale_phi, v[1]*arcScale_phi, v[2]*arcScale_phi);
+        arcPts_phi.push(`${p.x.toFixed(1)},${p.y.toFixed(1)}`);
+      }
+      out += `<polyline points="${arcPts_phi.join(' ')}" fill="none" stroke="#ffd23f" stroke-width="2" stroke-dasharray="4 2"/>`;
+    }
+    const vMid_phi = rotN(pt, phiDeg/2);
+    const phiLblP = P(vMid_phi[0]*(arcScale_phi+0.22), vMid_phi[1]*(arcScale_phi+0.22), vMid_phi[2]*(arcScale_phi+0.22));
+    out += `<text x="${phiLblP.x.toFixed(1)}" y="${phiLblP.y.toFixed(1)}" fill="#ffd23f" font-size="12" font-weight="800" font-family="monospace" text-anchor="middle" dominant-baseline="middle">φ=${phiDeg.toFixed(0)}°</text>`;
+  }
+
+  // ─── قوس زاویه β (بنفش) داخل صفحه — polyline 3D ───
+  {
+    const arcScale_b = 0.38;
+    const ref0 = { xy:[1,0,0], yz:[0,1,0], xz:[1,0,0] }[pt];
+    const steps = 32;
+    if(Math.abs(betaDeg) > 1){
+      const arcPts_b = [];
+      for(let i = 0; i <= steps; i++){
+        const v = rotAxis(rotAxis(ref0, gAxis[pt], (i/steps)*betaDeg), phiAxis[pt], -phiDeg);
+        const p = P(v[0]*arcScale_b, v[1]*arcScale_b, v[2]*arcScale_b);
+        arcPts_b.push(`${p.x.toFixed(1)},${p.y.toFixed(1)}`);
+      }
+      out += `<polyline points="${arcPts_b.join(' ')}" fill="none" stroke="#b48bff" stroke-width="2" stroke-dasharray="4 2"/>`;
+    }
+    const vMid_b = rotAxis(rotAxis(ref0, gAxis[pt], betaDeg/2), phiAxis[pt], -phiDeg);
+    const betaLblP = P(vMid_b[0]*(arcScale_b+0.22), vMid_b[1]*(arcScale_b+0.22), vMid_b[2]*(arcScale_b+0.22));
+    out += `<text x="${betaLblP.x.toFixed(1)}" y="${betaLblP.y.toFixed(1)}" fill="#b48bff" font-size="12" font-weight="800" font-family="monospace" text-anchor="middle" dominant-baseline="middle">β=${betaDeg.toFixed(0)}°</text>`;
+  }
+
+  // نقطه origin
+  out += `<circle cx="${O.x.toFixed(1)}" cy="${O.y.toFixed(1)}" r="4" fill="#eef2fb"/>`;
+
+  // (برچسب‌های φ و β کنار قوس خودشان رسم می‌شوند — بالا)
+
+  svg.innerHTML = out;
+
+  const ps=id('planeSel');
+  if(ps&&!ps.dataset.bound){ ps.dataset.bound='1'; ps.addEventListener('change',drawDiagram); }
+}
+
+function toggleSteps(){ stepsShown=!stepsShown; id('stepsPanel').classList.toggle('show',stepsShown); const a=id('stepsArrow'); if(a) a.classList.toggle('open', stepsShown); }
+
+function calculate(){
+  const errMsg=id('errMsg'); if(errMsg) errMsg.style.display='none';
+  const plane=(id('planeSel')&&id('planeSel').value)||'xy';
+  const phiDeg=normNum(id('phi').value||'0'), betaDeg=normNum(id('beta').value||'0'), E=normNum(id('Em').value), nu=normNum(id('nu').value), Fy=normNum(id('Fy').value);
+  const e_0  = getVal('e11');
+  const e_90 = (gType==='bi'||gType==='r45') ? getVal('e33') : null;
+  const e_45 = (gType==='r45')               ? getVal('e22') : null;
+  if(isNaN(phiDeg)||isNaN(betaDeg)||isNaN(E)||isNaN(nu)||isNaN(e_0)||(gType==='bi'&&isNaN(e_90))||(gType==='r45'&&(isNaN(e_90)||isNaN(e_45)))){ if(errMsg) errMsg.style.display='block'; return; }
+
+  // ── بررسی معتبربودن خواص ماده (مسدودکننده، مثل هشدار گیج 45°) ──
+  // E و Fy نباید منفی یا صفر باشند؛ ν باید در بازه فیزیکی مجاز مواد همسانگرد [0,0.5] باشد
+  const matWarnEl=id('matWarn');
+  if(matWarnEl){
+    const hardWarns=[];
+    if(E<=0) hardWarns.push('مدول الاستیسیته (E) باید مثبت و بزرگ‌تر از صفر باشد');
+    if(!isNaN(Fy)&&Fy<=0) hardWarns.push('تنش تسلیم (Fy) در صورت وارد کردن، باید مثبت و بزرگ‌تر از صفر باشد — یا آن را خالی بگذارید');
+    if(nu<0||nu>0.5) hardWarns.push('ضریب پواسون (ν) باید در بازهٔ مجاز مواد همسانگرد یعنی بین 0 و 0.5 باشد');
+    if(hardWarns.length){
+      matWarnEl.innerHTML='⚠️ ' + hardWarns.join('<br>⚠️ ');
+      matWarnEl.style.display='block';
+      window.scrollTo({top: matWarnEl.offsetTop - 80, behavior:'smooth'});
+      return; // متوقف شو تا کاربر مقادیر را اصلاح کند
+    }
+  }
+
+  // ── #6: بررسی ناسازگاری گیج 45° در همان صفحه ورودی (فقط r45) ──
+  const sGW=id('strainGaugeWarn');
+  if(sGW){ sGW.style.display='none'; sGW.innerHTML=''; }
+  if(gType==='r45'){
+    const gWarns=[];
+    const allMags=[Math.abs(e_0),Math.abs(e_45),Math.abs(e_90)];
+    const maxMag=Math.max(...allMags);
+    const nonZeroMags=allMags.filter(m=>m>1);
+    if(nonZeroMags.length===3 && maxMag/Math.min(...nonZeroMags)>30)
+      gWarns.push('اختلاف مقیاس زیاد بین سه مقدار — احتمال اشتباه نقطه اعشار یا واحد');
+    const avgOuter=(e_0+e_90)/2, spanOuter=Math.abs(e_0-e_90);
+    // این بررسی فقط وقتی ε0° و ε90° هر دو معنادار باشند فعال می‌شود تا حالت برش خالص
+    // (ε0°≈ε90°≈0 و ε45° بزرگ — کاملاً معتبر) به‌اشتباه ناسازگار تشخیص داده نشود
+    const outerActive = Math.abs(e_0)>1 || Math.abs(e_90)>1;
+    if(outerActive && maxMag>2 && Math.abs(e_45-avgOuter)>Math.max(spanOuter*3, maxMag*1.2))
+      gWarns.push('مقدار گیج 45° با مقادیر 0° و 90° ناسازگار است');
+    if(gWarns.length && sGW){
+      sGW.innerHTML='⚠️ ' + gWarns.join('<br>⚠️ ');
+      sGW.style.display='block';
+      window.scrollTo({top: sGW.offsetTop - 80, behavior:'smooth'});
+      return; // متوقف شو تا کاربر مقادیر را اصلاح کند
+    }
+  }
+  // هشدارهای نرم (غیرمسدودکننده) — احتمال اشتباه واحد یا مقدار غیرعادی
+  if(matWarnEl){
+    const softWarns=[];
+    if(E<100) softWarns.push('⚠️ E = '+f(E,0)+' MPa بسیار کوچک است — آیا به‌اشتباه واحد GPa وارد کرده‌اید؟ (مثال فولاد: 210000 MPa)');
+    if(!isNaN(Fy)&&Fy>0&&Fy>E) softWarns.push('⚠️ تنش تسلیم Fy = '+f(Fy,0)+' MPa از مدول الاستیسیته E = '+f(E,0)+' MPa بیشتر است — این مقدار واقعی به‌نظر نمی‌رسد');
+    if(softWarns.length){ matWarnEl.innerHTML=softWarns.join('<br>'); matWarnEl.style.display='block'; }
+    else matWarnEl.style.display='none';
+  }
+  const rad=Math.PI/180;
+
+  let ex, ey, gxy;
+  const c=Math.cos(betaDeg*rad), s=Math.sin(betaDeg*rad);
+
+  if(gType==='uni'){
+    // گیج یک‌جهته: e_0 = کرنش گیج در زاویه β — فرض تنش تک‌محوره
+    // e_0 = ex·(cos²β − ν·sin²β)  →  ex = e_0 / (cos²β − ν·sin²β)
+    const denom = c*c - nu*s*s;
+    ex  = e_0 / denom;
+    ey  = -nu * ex;
+    gxy = 0;
+
+  } else if(gType==='bi'){
+    // گیج دوجهته: e_0 در β، e_90 در β+90°، فرض gxy=0
+    const sum   = e_0 + e_90;
+    const dif   = e_0 - e_90;
+    const cos2b = Math.cos(2*betaDeg*rad);
+    if(Math.abs(cos2b)<1e-9){
+      ex  = sum/2;
+      ey  = sum/2;
+    } else {
+      const exmy = dif / cos2b;
+      ex = (sum + exmy) / 2;
+      ey = (sum - exmy) / 2;
+    }
+    gxy = 0;
+
+  } else {
+    // گیج سه‌جهته روزت: e_0 در β، e_45 در β+45°، e_90 در β+90°
+    // [e_0 ]   [cos²a1  sin²a1  sin(a1)cos(a1)] [ex ]
+    // [e_45] = [cos²a2  sin²a2  sin(a2)cos(a2)] [ey ]
+    // [e_90]   [cos²a3  sin²a3  sin(a3)cos(a3)] [gxy]
+    const a1=betaDeg*rad, a2=a1+Math.PI/4, a3=a1+Math.PI/2;
+    const m11=Math.cos(a1)**2, m12=Math.sin(a1)**2, m13=Math.sin(a1)*Math.cos(a1);
+    const m21=Math.cos(a2)**2, m22=Math.sin(a2)**2, m23=Math.sin(a2)*Math.cos(a2);
+    const m31=Math.cos(a3)**2, m32=Math.sin(a3)**2, m33=Math.sin(a3)*Math.cos(a3);
+    const det=m11*(m22*m33-m23*m32)-m12*(m21*m33-m23*m31)+m13*(m21*m32-m22*m31);
+    ex  = (e_0 *(m22*m33-m23*m32) - m12*(e_45*m33-m23*e_90) + m13*(e_45*m32-m22*e_90)) / det;
+    ey  = (m11*(e_45*m33-m23*e_90) - e_0 *(m21*m33-m23*m31) + m13*(m21*e_90-e_45*m31)) / det;
+    gxy = (m11*(m22*e_90-e_45*m32) - m12*(m21*e_90-e_45*m31) + e_0 *(m21*m32-m22*m31)) / det;
+  }
+
+  // محاسبه تنش
+  let S11, S22, S12;
+  if(gType==='uni'){
+    // تنش تک‌محوره واقعی: فقط S11 = E·ε11 (بدون ضریب پواسون)
+    S11 = E * ex * 1e-6;
+    S22 = 0;
+    S12 = 0;
+  } else {
+    const k = E*1e-6/(1-nu*nu);
+    S11 = k*(ex+nu*ey);
+    S22 = k*(ey+nu*ex);
+    S12 = E*gxy*1e-6/(2*(1+nu));
+  }
+  const eAvg=(ex+ey)/2, eR=Math.sqrt(((ex-ey)/2)**2 + (gxy/2)**2), ep1=eAvg+eR, ep2=eAvg-eR, thp=0.5*Math.atan2(gxy,ex-ey)*180/Math.PI;
+  const sAvg=(S11+S22)/2, sR=Math.sqrt(((S11-S22)/2)**2 + S12**2), sp1=sAvg+sR, sp2=sAvg-sR, vm=Math.sqrt(S11**2-S11*S22+S22**2+3*S12**2);
+
+  id('vmOut').innerHTML=`${f(vm,2)}<span class="vm-unit"> MPa</span>`;
+  id('r-e11').textContent=f(e_0,1);
+  if(gType==='bi'){
+    id('r-e22').textContent='';
+    id('row-e22r').style.display='none';
+    id('r-e33').textContent=f(e_90,1);
+    id('row-e33r').style.display='';
+  } else if(gType==='r45'){
+    id('row-e22r').style.display='';
+    id('r-e22').textContent=f(e_45,1);
+    id('r-e33').textContent=f(e_90,1);
+    id('row-e33r').style.display='';
+  } else {
+    id('row-e22r').style.display='none';
+    id('row-e33r').style.display='none';
+  }
+
+  id('r-e11c').innerHTML=`${f(ex,2)}<span class="ot-unit"> με</span>`;
+  id('r-e22c').innerHTML=`${f(ey,2)}<span class="ot-unit"> με</span>`;
+  id('r-g12c').innerHTML=`${f(gxy,2)}<span class="ot-unit"> με</span>`;
+  id('r-ep1').innerHTML=`${f(ep1,2)}<span class="ot-unit"> με</span>`;
+  id('r-ep2').innerHTML=`${f(ep2,2)}<span class="ot-unit"> με</span>`;
+  id('r-thp').innerHTML=`${f(thp,1)}<span class="ot-unit">°</span>`;
+  id('r-s11').innerHTML=`${f(S11,2)}<span class="ot-unit"> MPa</span>`;
+  id('r-s22').innerHTML=`${f(S22,2)}<span class="ot-unit"> MPa</span>`;
+  id('r-s12').innerHTML=`${f(S12,2)}<span class="ot-unit"> MPa</span>`;
+  id('r-sp1').innerHTML=`${f(sp1,2)}<span class="ot-unit"> MPa</span>`;
+  id('r-sp2').innerHTML=`${f(sp2,2)}<span class="ot-unit"> MPa</span>`;
+  id('r-vm').innerHTML=`${f(vm,2)}<span class="ot-unit"> MPa</span>`;
+
+  const hasFy=!isNaN(Fy)&&Fy>0;
+  id('row-sf').style.display=hasFy?'':'none'; id('row-pct').style.display=hasFy?'':'none'; id('row-stat').style.display=hasFy?'':'none'; id('sfBarWrap').style.display=hasFy?'block':'none';
+  if(hasFy){
+    const sfVal=Fy/vm, pct=vm/Fy*100;
+    id('r-sf').textContent=f(sfVal,2); id('r-pct').textContent=f(pct,1)+' %'; id('sfBar').style.width=Math.min(pct,100)+'%';
+    let cls='ok',txt='ایمن',ico='✅';
+    if(sfVal<1){cls='bad';txt='خطر';ico='❌'; id('sfBar').style.background='#ff5c7a'}
+    else if(sfVal<2){cls='warn';txt='احتیاط';ico='⚠️'; id('sfBar').style.background='#ffb84d'}
+    else id('sfBar').style.background='#2ee6a6';
+    id('r-stat').innerHTML=`<span class="status-badge ${cls}">${ico} ${txt}</span>`;
+  }
+
+  const rawBlock =
+    gType==='uni'
+      ? `<span class="k">ε0°(raw)</span> = <span class="v">${f(e_0,2)}</span>`
+      : gType==='bi'
+        ? `<span class="k">ε0°(raw)</span> = <span class="v">${f(e_0,2)}</span>\n<span class="k">ε90°(raw)</span> = <span class="v">${f(e_90,2)}</span>`
+        : `<span class="k">ε0°(raw)</span> = <span class="v">${f(e_0,2)}</span>\n<span class="k">ε45°(raw)</span> = <span class="v">${f(e_45,2)}</span>\n<span class="k">ε90°(raw)</span> = <span class="v">${f(e_90,2)}</span>`;
+
+  const step3Text = gType==='uni'
+    ? `<span class="k">ε11</span> = ε_گیج / (cos²β − ν·sin²β) = <span class="v">${f(ex,2)} με</span>
+<span class="k">ε22</span> = −ν × ε11 = <span class="v">${f(ey,2)} με</span>  (اثر پواسون)
+<span class="k">γ12</span> = 0  (تنش تک‌محوره)`
+    : gType==='bi'
+    ? `<span class="k">ε11</span> = (e0°+e90° + (e0°−e90°)/cos2β) / 2 = <span class="v">${f(ex,2)} με</span>
+<span class="k">ε22</span> = (e0°+e90° − (e0°−e90°)/cos2β) / 2 = <span class="v">${f(ey,2)} με</span>
+<span class="k">γ12</span> = 0  (فرض دوجهته)`
+    : `<span class="k">ε11</span> = <span class="v">${f(ex,2)} με</span>
+<span class="k">ε22</span> = <span class="v">${f(ey,2)} με</span>
+<span class="k">γ12</span> = <span class="v">${f(gxy,2)} με</span>`;
+
+  const step5Text = gType==='uni'
+    ? `<span class="k">S11</span> = E × ε11 × 10⁻⁶ = <span class="v">${f(S11,2)} MPa</span>  (تنش تک‌محوره)
+<span class="k">S22</span> = 0 MPa
+<span class="k">S12</span> = 0 MPa`
+    : `<span class="k">S11</span> = E×10⁻⁶/(1−ν²) × (ε11 + ν ε22) = <span class="v">${f(S11,2)} MPa</span>
+<span class="k">S22</span> = E×10⁻⁶/(1−ν²) × (ε22 + ν ε11) = <span class="v">${f(S22,2)} MPa</span>
+<span class="k">S12</span> = E × γ12 × 10⁻⁶ / [2(1+ν)] = <span class="v">${f(S12,2)} MPa</span>`;
+
+  const stepText = `
+<span class="h">مرحله 1 — ورودی‌ها</span>
+<span class="k">صفحه نصب</span> = <span class="v">${plane.toUpperCase()}</span>
+<span class="k">φ</span> = <span class="v">${phiDeg.toFixed(1)}°</span>
+<span class="k">β</span> = <span class="v">${betaDeg.toFixed(1)}°</span>
+<span class="k">E</span> = <span class="v">${f(E,2)} MPa</span>
+<span class="k">ν</span> = <span class="v">${f(nu,3)}</span>
+
+<span class="h">مرحله 2 — کرنش خام</span>
+${rawBlock}
+
+<span class="h">مرحله 3 — تبدیل به سیستم F</span>
+${step3Text}
+
+<span class="h">مرحله 4 — کرنش اصلی</span>
+<span class="k">εavg</span> = (${f(ex,2)} + ${f(ey,2)}) / 2 = <span class="v">${f(eAvg,2)}</span>
+<span class="k">Rε</span> = sqrt[((ε11-ε22)/2)^2 + (γ12/2)^2] = <span class="v">${f(eR,2)}</span>
+<span class="k">ε1</span> = εavg + Rε = <span class="v">${f(ep1,2)}</span>
+<span class="k">ε2</span> = εavg - Rε = <span class="v">${f(ep2,2)}</span>
+<span class="k">θp</span> = 1/2 atan2(γ12, ε11-ε22) = <span class="v">${f(thp,1)}°</span>
+
+<span class="h">مرحله 5 — تبدیل به تنش</span>
+${step5Text}
+
+<span class="h">مرحله 6 — تنش‌های اصلی</span>
+<span class="k">σavg</span> = (${f(S11,2)} + ${f(S22,2)}) / 2 = <span class="v">${f(sAvg,2)} MPa</span>
+<span class="k">Rσ</span> = sqrt[((S11-S22)/2)^2 + S12^2] = <span class="v">${f(sR,2)} MPa</span>
+<span class="k">σ1</span> = σavg + Rσ = <span class="v">${f(sp1,2)} MPa</span>
+<span class="k">σ2</span> = σavg - Rσ = <span class="v">${f(sp2,2)} MPa</span>
+
+<span class="h">مرحله 7 — Von Mises</span>
+<span class="k">vm</span> = sqrt(S11^2 - S11·S22 + S22^2 + 3S12^2)
+<span class="v">${f(vm,2)} MPa</span>
+${hasFy ? `<span class="k">SF</span> = Fy / vm = <span class="v">${f(Fy,2)} / ${f(vm,2)} = ${f(Fy/vm,2)}</span>` : ''}
+`;
+  id('stepsOut').innerHTML=stepText;
+  stepsShown=false;
+  id('stepsPanel').classList.remove('show');
+  const sArrow=id('stepsArrow');
+  if(sArrow) sArrow.classList.remove('open');
+
+  // ── #5: افزودن به سابقه محاسبات ──
+  const statCls = hasFy ? (Fy/vm<1?'bad':Fy/vm<2?'warn':'ok') : null;
+  addToHistory(vm, S11, S22, S12, gType, plane, statCls, e_0, e_90, e_45);
+
+  go4();
+}
+
+
+// ── سابقه محاسبات این نشست ──
+const calcHistory=[];
+const typeLabel={uni:'یک‌جهته',bi:'دوجهته',r45:'سه‌جهته'};
+let histOpen=false;
+
+function addToHistory(vm, S11, S22, S12, gtype, plane, cls, e_0, e_90, e_45){
+  const last = calcHistory[0];
+  if(last && last.vm===vm && last.S11===S11 && last.S22===S22 && last.S12===S12 && last.gtype===gtype && last.e_0===e_0 && last.e_90===e_90 && last.e_45===e_45) return;
+  calcHistory.unshift({vm,S11,S22,S12,gtype,plane,cls,e_0,e_90,e_45});
+  if(calcHistory.length>10) calcHistory.pop();
+  renderHistory();
+  const btn=id('histBtn'), lbl=id('histLabel');
+  if(btn) btn.classList.add('has-items');
+  if(lbl) lbl.textContent='سابقه محاسبات ('+calcHistory.length+')';
+}
+
+function deleteHistory(idx){
+  calcHistory.splice(idx,1);
+  renderHistory();
+  const btn=id('histBtn'), lbl=id('histLabel');
+  if(calcHistory.length===0){ if(btn) btn.classList.remove('has-items'); if(lbl) lbl.textContent='سابقه محاسبات'; }
+  else if(lbl) lbl.textContent='سابقه محاسبات ('+calcHistory.length+')';
+}
+
+function confirmDelete(idx){
+  document.querySelectorAll('.hist-confirm').forEach(el=>el.classList.remove('show'));
+  const c=id('hc-'+idx); if(c) c.classList.add('show');
+}
+function cancelDelete(idx){ const c=id('hc-'+idx); if(c) c.classList.remove('show'); }
+
+function toggleHistory(){
+  const panel=id('histPanel');
+  if(!panel) return;
+  histOpen=!histOpen;
+  panel.style.display=histOpen?'block':'none';
+  const arrow=id('histArrow');
+  if(arrow) arrow.classList.toggle('open', histOpen);
+}
+
+function strainLine(h){
+  if(h.gtype==='uni') return `ε0°=${f(h.e_0,1)}`;
+  if(h.gtype==='bi')  return `ε0°=${f(h.e_0,1)} ε90°=${f(h.e_90,1)}`;
+  return `ε0°=${f(h.e_0,1)} ε45°=${f(h.e_45,1)} ε90°=${f(h.e_90,1)}`;
+}
+
+function renderHistory(){
+  const hl=id('histList');
+  if(!hl) return;
+  hl.innerHTML=calcHistory.map((h,i)=>`
+    <div class="hist-item" id="hi-${i}">
+      <button class="hist-del-btn" onclick="confirmDelete(${i})" aria-label="حذف">✕</button>
+      <div class="hi-vm">${f(h.vm,1)}<span style="font-size:10px;color:var(--t3);font-weight:400"> MPa</span></div>
+      <div class="hi-meta">
+        <div class="hi-line1">${typeLabel[h.gtype]||h.gtype}: ${strainLine(h)}</div>
+        <div>S11=${f(h.S11,1)}  S22=${f(h.S22,1)}  S12=${f(h.S12,1)} MPa</div>
+      </div>
+      <div class="hist-confirm" id="hc-${i}">
+        <div class="hc-txt">حذف شود؟</div>
+        <div class="hc-btns">
+          <button class="hc-del" onclick="deleteHistory(${i})">حذف</button>
+          <button class="hc-cancel" onclick="cancelDelete(${i})">انصراف</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function init(){ buildStrainUI(); selType('uni', document.querySelector('.typeopt')); drawDiagram(); go1(); }
+init();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
